@@ -16,7 +16,13 @@ const StandardButton = ({
   onPress: (event: GestureResponderEvent) => void;
 }) => {
   return (
-    <Pressable onPress={onPress} style={styles.container}>
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.container,
+        pressed ? { backgroundColor: theme.backgroundSecondary } : undefined,
+      ]}
+    >
       <Text style={styles.text}>{title}</Text>
     </Pressable>
   );
@@ -24,7 +30,7 @@ const StandardButton = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    alignSelf: "stretch",
     borderColor: theme.colorPrimary,
     backgroundColor: theme.backgroundPrimary,
     borderWidth: 2,
@@ -38,7 +44,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: theme.colorPrimary,
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 600,
   },
 });

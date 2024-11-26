@@ -1,49 +1,32 @@
-import { Button, Text, View } from "react-native";
+import { View } from "react-native";
 import React from "react";
 import ScreenContainer from "../../components/ScreenContainer";
 import useBalance from "../../hooks/useBalance";
-import useGetWallet from "../../hooks/useGetWallet";
-import useProofStore from "../../hooks/useProofStore";
-import { deleteDatabaseAsync, useSQLiteContext } from "expo-sqlite";
-import StandardButton from "../../components/StandardButton";
+import { useNavigation } from "@react-navigation/native";
+import { Button, Heading, Paragraph, XStack } from "tamagui";
+import ThemedFA5Icon from "../../components/ThemedFA5Icon";
 
 const HomeScreen = () => {
   const balance = useBalance();
-  const getWallet = useGetWallet();
-  const { saveProofs } = useProofStore();
-  const db = useSQLiteContext();
+  const { navigate } = useNavigation();
+
   return (
     <ScreenContainer>
-      {Object.keys(balance).map((url) => (
-        <Text>
-          {url}: {balance[url]}
-        </Text>
-      ))}
-      <Button
-        title="Test"
-        onPress={async () => {
-          try {
-            console.log("Getting proofs");
-            const wallet = getWallet("https://nofees.testnut.cashu.space");
-            const quoteRes = await wallet.createMintQuote(21);
-            console.log("quote");
-            await new Promise((res) => {
-              setTimeout(res, 4000);
-            });
-            const proofs = await wallet.mintProofs(21, quoteRes.quote);
-            saveProofs(
-              proofs.map((p) => ({
-                ...p,
-                mintUrl: "https://nofees.testnut.cashu.space",
-                status: "ready",
-              })),
-            );
-          } catch (e) {
-            console.log(e);
-          }
-        }}
-      />
-      <View style={{ flex: 1 }}></View>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Heading
+          size="$12"
+          onPress={() => {
+            console.log("yay!");
+          }}
+        >
+          {balance.total} SATS
+        </Heading>
+      </View>
+      <XStack flex={2}>
+        <Button>
+          <ThemedFA5Icon name="database" />
+        </Button>
+      </XStack>
       <View
         style={{
           flexDirection: "row",
@@ -51,8 +34,20 @@ const HomeScreen = () => {
           width: "100%",
         }}
       >
-        <StandardButton title="Receive" />
-        <StandardButton title="Send" />
+        <XStack width="100%" space={"$2"}>
+          <Button
+            size={"$6"}
+            onPress={() => {
+              navigate("Receive");
+            }}
+            flex={1}
+          >
+            Receive
+          </Button>
+          <Button size={"$6"} flex={1}>
+            Send
+          </Button>
+        </XStack>
       </View>
     </ScreenContainer>
   );
